@@ -9,7 +9,6 @@ import { StyledText } from '../common';
 import CurrentDayWeatherSummary from '../currentDayWeatherSummary';
 import TemperatureInDegrees from '../temperatureInDegrees';
 import * as images from '../../assets';
-
 import {
   StyledCurrentDayWeatherView,
   StyledCurrentDayWeatherViewContainer,
@@ -23,11 +22,23 @@ function CurrentDayWeatherView({
     minimumTemperature,
     maximumTemperature,
     currentTemperature,
-    description,
     type,
   },
 }: ICurrentDayWeatherViewProps): JSX.Element {
   const getImageAndBackgroundColorKeyByType = () => {
+    switch (type) {
+      case WeatherCondition.Sunny:
+        return WeatherConditionType.Sunny.toLowerCase();
+      case WeatherCondition.Cloudy:
+        return WeatherConditionType.Cloudy.toLowerCase();
+      case WeatherCondition.Rainy:
+        return WeatherConditionType.Rainy.toLowerCase();
+      default:
+        return WeatherConditionType.Sunny.toLowerCase();
+    }
+  };
+
+  const getWeatherCondition = () => {
     switch (type) {
       case WeatherCondition.Sunny:
         return WeatherConditionType.Sunny;
@@ -43,7 +54,9 @@ function CurrentDayWeatherView({
   return (
     <StyledCurrentDayWeatherViewContainer>
       <StyledCurrentDayWeatherView
-        source={images[getImageAndBackgroundColorKeyByType()]}
+        source={
+          images[getImageAndBackgroundColorKeyByType() as keyof typeof images]
+        }
         resizeMode="cover"
       >
         <StyledTemperature>
@@ -55,7 +68,7 @@ function CurrentDayWeatherView({
           />
         </StyledTemperature>
         <StyledText isUpperCase fontWeight={600} fontSize={25}>
-          {description}
+          {getWeatherCondition()}
         </StyledText>
       </StyledCurrentDayWeatherView>
       <CurrentDayWeatherSummary
