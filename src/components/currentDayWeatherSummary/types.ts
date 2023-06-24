@@ -1,5 +1,4 @@
 interface ICurrentDayWeatherSummaryProps {
-  backgroundColor: string;
   minimumTemperature: number;
   maximumTemperature: number;
   currentTemperature: number;

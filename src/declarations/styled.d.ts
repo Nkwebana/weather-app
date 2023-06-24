@@ -12,6 +12,7 @@ declare module 'styled-components/native' {
       error: string;
       success: string;
       warning: string;
+      primary: string;
     };
     dimensions: {
       screenWidth: number;

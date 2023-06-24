@@ -1,6 +1,5 @@
 import styled from 'styled-components/native';
 
-// NOTE: change yourElementType to your preferred type: e.g button
 const StyledTextInput = styled.TextInput`
   padding: 5px 10px;
   font-size: 16px;

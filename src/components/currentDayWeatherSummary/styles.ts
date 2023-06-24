@@ -1,9 +1,12 @@
 import styled from 'styled-components/native';
-import { IStyledCurrentDayWeatherSummaryProps } from './types';
 
-const StyledCurrentDayWeatherSummary = styled.View<IStyledCurrentDayWeatherSummaryProps>`
+const StyledCurrentDayWeatherSummary = styled.View`
   height: 60px;
-  background-color: ${({ backgroundColor }) => backgroundColor};
+  background-color: ${({
+    theme: {
+      colors: { sunny },
+    },
+  }) => sunny};
   flex-direction: row;
   justify-content: space-between;
   align-items: center;

@@ -7,7 +7,7 @@ import { useAppContext } from '../../context';
 import useLocationPermission from '../useLocationPermission';
 import { IApiResponse, ICoordinates } from '../useWeather/types';
 import { geoCode, reverseGeoCode } from './api';
-import { IAddress, IGeoCodeResponse, IReverseGeocodeResponse } from './types';
+import { IGeoCodeResponse, IReverseGeocodeResponse } from './types';
 import { formatLocationSearchResults } from './utils';
 
 const useLocation = () => {
@@ -15,10 +15,8 @@ const useLocation = () => {
   const {
     ui: { showModal, hideModal },
     user: { addFavoriteLocation },
+    api: { address, updateAddress },
   } = useAppContext();
-
-  const [deviceLocation, setDeviceLocation] = useState<ICoordinates>();
-  const [address, setAddress] = useState<IAddress>();
 
   const [addressSuggestions, setAddressSuggestions] = useState<
     IAutoCompleteSelectOption[]
@@ -46,7 +44,7 @@ const useLocation = () => {
             address: { LongLabel },
             location: { x, y },
           } = result as IReverseGeocodeResponse;
-          setAddress({
+          updateAddress({
             title: LongLabel,
             coords: {
               latitude: y,
@@ -62,7 +60,6 @@ const useLocation = () => {
     () =>
       Geolocation.getCurrentPosition(
         ({ coords }) => {
-          setDeviceLocation(coords);
           getAddressDescription(coords);
         },
         (error) =>
@@ -82,7 +79,8 @@ const useLocation = () => {
 
   const { mutate: getAddressSuggestions } = useMutation(
     'getAddressSuggestions',
-    (searchTerm: string) => geoCode(searchTerm, deviceLocation as ICoordinates),
+    (searchTerm: string) =>
+      geoCode(searchTerm, address?.coords as ICoordinates),
     {
       onSuccess: ({ result, error, ok }: IApiResponse) => {
         if (error) {
@@ -117,19 +115,16 @@ const useLocation = () => {
   };
 
   useEffect(() => {
-    if (hasUserGrantedLocationPermission && !deviceLocation) {
+    if (hasUserGrantedLocationPermission) {
       getDeviceLocation();
     }
-  }, [getDeviceLocation, hasUserGrantedLocationPermission, deviceLocation]);
+  }, [getDeviceLocation, hasUserGrantedLocationPermission]);
 
   return {
     getAddressSuggestions,
     getAddressDescription,
-    deviceLocation,
     addressSuggestions,
-    updateAddress: setAddress,
     addAddressToFavorites,
-    address,
   };
 };
 

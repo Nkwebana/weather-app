@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
 import { ModalType } from '../../components/modal/enums';
 import { useAppContext } from '../../context';
@@ -13,34 +13,26 @@ import {
 import {
   IApiResponse,
   ICoordinates,
-  ITodaysWeather,
   ITodaysWeatherResponse,
-  IWeatherForecast,
   IWeatherForecastResponse,
   IWeatherRequestPayload,
 } from './types';
-import { TemperatureUnit } from './enums';
 
 function useWeather() {
-  const [todaysWeather, setTodaysWeather] = useState<ITodaysWeather>();
-  const [weatherForecast, setWeatherForecast] = useState<IWeatherForecast[]>();
-  const [activeMetric, setActiveMetric] = useState<TemperatureUnit>(
-    TemperatureUnit.Metric,
-  );
   const [
     shouldRetryTodaysWeatherCall,
     setShouldRetryTodaysWeatherCall,
   ] = useState<boolean>(false);
 
   const {
-    ui: { showModal, hideModal },
+    ui: { showModal, hideModal, toggleLoader },
+    api: { activeMetric, updateTodaysWeather, updateWeatherForecast },
   } = useAppContext();
 
-  const { mutate: getTodaysWeather } = useMutation<
-    IApiResponse,
-    unknown,
-    IWeatherRequestPayload
-  >(
+  const {
+    mutate: getTodaysWeather,
+    isLoading: isFetchingTodaysWeather,
+  } = useMutation<IApiResponse, unknown, IWeatherRequestPayload>(
     'getTodaysWeather',
     ({ latitude, longitude, unit }: IWeatherRequestPayload) =>
       getTodaysWeatherByLocation({ latitude, longitude, unit }),
@@ -51,7 +43,7 @@ function useWeather() {
             title: 'Get Weather Error',
             message: new Error(error as string).message,
             primaryActionTitle: 'Retry',
-            presentationStyle: 'overFullScreen',
+            presentationStyle: 'fullScreen',
             isTransparent: true,
             primaryAction: () => {
               setShouldRetryTodaysWeatherCall(true);
@@ -69,24 +61,28 @@ function useWeather() {
             result as ITodaysWeatherResponse,
           );
 
-          setTodaysWeather(formattedData);
+          updateTodaysWeather(formattedData);
         }
       },
     },
   );
 
-  const { mutate: getWeatherForecast } = useMutation(
+  const {
+    mutate: getWeatherForecast,
+    isLoading: isFetchingWeatherForecast,
+  } = useMutation(
     'getWeatherForeCast',
     (coords: ICoordinates) =>
       getWeatherForecastByLocation({ ...coords, unit: activeMetric }),
     {
       onSuccess: ({ result, error, ok }: IApiResponse) => {
+        toggleLoader(false);
         if (error) {
           return showModal({
             title: 'Error',
             message: new Error(error as string).message,
             primaryActionTitle: 'Retry',
-            presentationStyle: 'overFullScreen',
+            presentationStyle: 'fullScreen',
             isTransparent: true,
             primaryAction: () => {
               // act on primary action
@@ -98,29 +94,27 @@ function useWeather() {
             type: ModalType.Error,
           });
         }
+
         if (result && ok) {
           const formattedData = formatWeatherForecastResponse(
             result as IWeatherForecastResponse,
           );
-          setWeatherForecast(formattedData);
+          updateWeatherForecast(formattedData);
         }
       },
     },
   );
 
-  const updateTemperatureUnit = useCallback(
-    (metric: TemperatureUnit) => setActiveMetric(metric),
-    [],
-  );
+  useEffect(() => {
+    if (isFetchingTodaysWeather || isFetchingWeatherForecast) {
+      toggleLoader(true);
+    }
+  }, [isFetchingWeatherForecast, isFetchingTodaysWeather, toggleLoader]);
 
   return {
     getTodaysWeather,
-    updateTemperatureUnit,
-    activeMetric,
     getWeatherForecast,
     shouldRetryTodaysWeatherCall,
-    todaysWeather,
-    weatherForecast,
   };
 }
 

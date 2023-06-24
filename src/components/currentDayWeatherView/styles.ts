@@ -4,10 +4,15 @@ const StyledCurrentDayWeatherViewContainer = styled.View`
   height: 385px;
 `;
 
-const StyledCurrentDayWeatherView = styled.ImageBackground`
+const StyledCurrentDayWeatherView = styled.View`
   flex: 1;
   align-items: center;
   justify-content: center;
+  background-color: ${({
+    theme: {
+      colors: { transparency },
+    },
+  }) => transparency};
 `;
 
 const StyledTemperature = styled.View`

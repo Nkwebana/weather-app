@@ -40,6 +40,7 @@ Once the Weather App is running on your device, you can perform the following ac
 
 - Get your current locations weather information
 - Enter a location in the search bar
+- Tap a location from the suggestions
 
 ## Below is a list of extras that I added:
 
@@ -48,7 +49,7 @@ Once the Weather App is running on your device, you can perform the following ac
 - Add locations to favorite locations
 - Persisting favorite locations between sessions (Hydrating app sandbox)
 - View a list of favorite locations
-- View favorite locations on a map
+- Tap on a favorite location to view its weather
 
 ## Testing
 

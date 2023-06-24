@@ -3,31 +3,18 @@ import Modal from '../components/modal';
 import { ModalType } from '../components/modal/enums';
 import useHydration from '../hooks/useHydration';
 import { IAddress } from '../hooks/useLocation/types';
-import { defaultModal, defaultUserProfile } from './mocks';
+import { contextInitialState, defaultModal, defaultUserProfile } from './mocks';
 import {
   IAppContextProvider,
   IModalState,
-  IUiContext,
-  IUserContext,
   IUserProfileState,
+  IContext,
 } from './types';
+import { ITodaysWeather, IWeatherForecast } from '../hooks/useWeather/types';
+import { TemperatureUnit } from '../hooks/useWeather/enums';
+import Loader from '../components/loader';
 
-const AppContext = createContext<{
-  ui: IUiContext;
-  user: IUserContext;
-}>({
-  ui: {
-    modalState: defaultModal,
-    showModal: () => false,
-    hideModal: () => false,
-  },
-  user: {
-    profile: defaultUserProfile.profile,
-    updateProfile: () => false,
-    addFavoriteLocation: () => false,
-    removeFavoriteLocation: () => false,
-  },
-});
+const AppContext = createContext<IContext>(contextInitialState);
 
 export const useAppContext = () => useContext(AppContext);
 
@@ -36,6 +23,13 @@ const AppContextProvider = ({ children }: IAppContextProvider) => {
   const [profile, setProfile] = useState<IUserProfileState>(
     defaultUserProfile.profile,
   );
+  const [todaysWeather, setTodaysWeather] = useState<ITodaysWeather>();
+  const [weatherForecast, setWeatherForecast] = useState<IWeatherForecast[]>();
+  const [activeMetric, setActiveMetric] = useState<TemperatureUnit>(
+    TemperatureUnit.Metric,
+  );
+  const [address, setAddress] = useState<IAddress>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { hydrateSandbox } = useHydration();
 
   const showModal = useCallback(
@@ -103,27 +97,53 @@ const AppContextProvider = ({ children }: IAppContextProvider) => {
     [profile, hydrateSandbox, showModal, hideModal],
   );
 
-  const removeFavoriteLocation = (address: IAddress) => {
-    const updatedLocations = profile.favoriteLocations.filter(
-      ({ coords, title }) =>
-        title !== address.title &&
-        coords.latitude !== address.coords.latitude &&
-        coords.longitude !== address.coords.longitude,
-    );
+  const toggleLoader = useCallback(
+    (isLoaderActive: boolean) => setIsLoading(isLoaderActive),
+    [],
+  );
 
-    profile.favoriteLocations = updatedLocations;
+  const updateAddress = (newAddress: IAddress) => setAddress(newAddress);
+
+  const removeFavoriteLocation = (locationIndex: number) => {
+    profile.favoriteLocations.splice(locationIndex, 1);
 
     setProfile({ ...profile });
     hydrateSandbox({ ...profile });
   };
 
+  const updateWeatherUnit = useCallback((metric: TemperatureUnit) => {
+    setActiveMetric(metric);
+  }, []);
+
+  const updateTodaysWeather = useCallback(
+    (weather: ITodaysWeather) => setTodaysWeather(weather),
+    [],
+  );
+
+  const updateWeatherForecast = useCallback(
+    (forecast: IWeatherForecast[]) => setWeatherForecast(forecast),
+    [],
+  );
+
   return (
     <AppContext.Provider
       value={{
+        api: {
+          todaysWeather,
+          weatherForecast,
+          activeMetric,
+          address,
+          updateTodaysWeather,
+          updateWeatherForecast,
+          updateWeatherUnit,
+          updateAddress,
+        },
         ui: {
           modalState,
+          isLoading,
           showModal,
           hideModal,
+          toggleLoader,
         },
         user: {
           profile,
@@ -135,6 +155,7 @@ const AppContextProvider = ({ children }: IAppContextProvider) => {
     >
       {children}
       <Modal />
+      <Loader />
     </AppContext.Provider>
   );
 };

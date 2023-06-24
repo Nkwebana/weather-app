@@ -2,7 +2,6 @@ import { Modal } from 'react-native';
 import styled from 'styled-components/native';
 import { IStyledHeaderProps } from './types';
 
-// NOTE: change yourElementType to your preferred type: e.g button
 const StyledModal = styled(Modal)`
   flex: 1;
 `;
@@ -12,13 +11,16 @@ const StyledModalHeader = styled.View<IStyledHeaderProps>`
   padding: 20px;
   align-items: center;
 `;
+
 const StyledModalBody = styled.View`
   padding: 20px;
   flex: 1;
 `;
+
 const StyledModalFooter = styled.View`
   flex-direction: row;
   justify-content: space-between;
+  padding: 20px;
 `;
 
 const StyledModalWrapper = styled.View`
@@ -33,7 +35,7 @@ const StyledModalWrapper = styled.View`
 `;
 
 const StyledModalInner = styled.View`
-  min-height: 40%;
+  min-height: 30%;
   background-color: ${({
     theme: {
       colors: { white },
@@ -48,7 +50,12 @@ const StyledModalInner = styled.View`
   overflow: hidden;
 `;
 
+const StyledAction = styled.View`
+  width: 47%;
+`;
+
 export {
+  StyledAction,
   StyledModal,
   StyledModalBody,
   StyledModalFooter,

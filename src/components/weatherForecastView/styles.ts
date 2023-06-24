@@ -1,21 +1,29 @@
 import styled from 'styled-components/native';
-import {
-  IStyledWeatherForecastContainerViewProps,
-  IStyledWeatherForecastViewProps,
-} from './types';
+import { IStyledWeatherForecastViewProps } from './types';
 
-const StyledWeatherForecastViewContainer = styled.ScrollView<IStyledWeatherForecastContainerViewProps>`
-  flex: 1;
-  margin-top: 1px;
-  background-color: ${({ backgroundColor }) => backgroundColor};
-  padding: 20px 25px 0 20px;
+const StyledWeatherForecastViewContainer = styled.ScrollView`
+  background-color: ${({
+    theme: {
+      colors: { primary },
+    },
+  }) => primary};
+  padding: 20px;
+`;
+
+const StyledActionsWrapper = styled.View`
+  padding: 20px;
+  background: ${({
+    theme: {
+      colors: { primary },
+    },
+  }) => primary};
 `;
 
 const StyledWeatherForecastView = styled.View<IStyledWeatherForecastViewProps>`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  height: 36px;
+  height: 46px;
   margin-bottom: ${({ isLastItem }) => (isLastItem ? '30px' : 0)};
 `;
 
@@ -47,4 +55,5 @@ export {
   StyledWeatherForecastView,
   StyledWeatherForecastViewContainer,
   StyledWeatherIcon,
+  StyledActionsWrapper,
 };

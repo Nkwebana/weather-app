@@ -42,6 +42,7 @@ function AutoComplete({
     Keyboard.dismiss();
 
     onSelect({ latitude: y, longitude: x }, title);
+    setSearchTerm('');
   };
 
   const handleChange = (value: string) => {

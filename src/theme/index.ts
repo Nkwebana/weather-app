@@ -12,6 +12,7 @@ export const theme: DefaultTheme = {
     error: '#D8576E',
     success: '#7CC958',
     warning: '#ba6947',
+    primary: '#112244',
   },
   dimensions: {
     screenWidth: Dimensions.get('window').width,

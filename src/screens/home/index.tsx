@@ -17,31 +17,29 @@ import WeatherForecastView from '../../components/weatherForecastView';
 import useLocation from '../../hooks/useLocation';
 import useWeather from '../../hooks/useWeather';
 import { ICoordinates } from '../../hooks/useWeather/types';
-import { RootStackParamList } from '../../navigation/types';
+import { HomeProps, RootStackParamList } from '../../navigation/types';
 import { debounce, getIconName } from '../../utils';
 import IconButton from '../../components/iconButton';
 import { useAppContext } from '../../context';
 import { TemperatureUnit } from '../../hooks/useWeather/enums';
 
-function Home(): JSX.Element {
+function Home(_props: HomeProps): JSX.Element {
+  const { getTodaysWeather, getWeatherForecast } = useWeather();
   const {
-    getTodaysWeather,
-    updateTemperatureUnit,
-    todaysWeather,
-    weatherForecast,
-    getWeatherForecast,
-    activeMetric,
-  } = useWeather();
-  const {
-    getAddressSuggestions,
     addressSuggestions,
-    deviceLocation,
-    updateAddress,
+    getAddressSuggestions,
     addAddressToFavorites,
-    address,
   } = useLocation();
   const {
     user: { profile },
+    api: {
+      activeMetric,
+      todaysWeather,
+      weatherForecast,
+      address,
+      updateWeatherUnit,
+      updateAddress,
+    },
   } = useAppContext();
 
   const { navigate } = useNavigation<
@@ -71,27 +69,30 @@ function Home(): JSX.Element {
 
   const handleTemperatureType = () => {
     if (activeMetric === TemperatureUnit.Metric) {
-      return updateTemperatureUnit(TemperatureUnit.Imperial);
+      return updateWeatherUnit(TemperatureUnit.Imperial);
     }
 
-    updateTemperatureUnit(TemperatureUnit.Metric);
+    updateWeatherUnit(TemperatureUnit.Metric);
   };
 
   useEffect(() => {
-    if (deviceLocation) {
+    if (address) {
       getTodaysWeather({
-        latitude: deviceLocation.latitude,
-        longitude: deviceLocation.longitude,
+        latitude: address.coords.latitude,
+        longitude: address.coords.longitude,
         unit: activeMetric,
       });
     }
-  }, [deviceLocation, getTodaysWeather, activeMetric]);
+  }, [address, activeMetric, getTodaysWeather]);
 
   useEffect(() => {
-    if (todaysWeather && deviceLocation) {
-      getWeatherForecast(deviceLocation);
+    if (todaysWeather && address) {
+      getWeatherForecast({
+        latitude: address.coords.latitude,
+        longitude: address.coords.longitude,
+      });
     }
-  }, [todaysWeather, deviceLocation, getWeatherForecast]);
+  }, [getWeatherForecast, address, todaysWeather]);
 
   return (
     <StyledApplicationWrapper>

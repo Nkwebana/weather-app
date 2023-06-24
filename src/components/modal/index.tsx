@@ -18,6 +18,7 @@ import {
   StyledModalHeader,
   StyledModalInner,
   StyledModalWrapper,
+  StyledAction,
 } from './styles';
 
 function Modal(): JSX.Element {
@@ -34,7 +35,7 @@ function Modal(): JSX.Element {
         title,
         children,
         type,
-        presentationStyle,
+        presentationStyle = 'fullScreen',
         isTransparent,
       },
     },
@@ -60,7 +61,7 @@ function Modal(): JSX.Element {
     <StyledModal
       visible={isVisible}
       presentationStyle={presentationStyle || 'pageSheet'}
-      transparent={isTransparent}
+      transparent={!isTransparent}
       onRequestClose={hideModal}
     >
       <StyledSafeAreaView>
@@ -78,24 +79,28 @@ function Modal(): JSX.Element {
 
               <StyledModalFooter>
                 {secondaryAction && secondaryActionTitle && (
-                  <Button
-                    onPress={() => {
-                      hideModal();
-                      secondaryAction();
-                    }}
-                    title={secondaryActionTitle}
-                    variant={ButtonVariant.Secondary}
-                  />
+                  <StyledAction>
+                    <Button
+                      onPress={() => {
+                        hideModal();
+                        secondaryAction();
+                      }}
+                      title={secondaryActionTitle}
+                      variant={ButtonVariant.Secondary}
+                    />
+                  </StyledAction>
                 )}
                 {primaryAction && primaryActionTitle && (
-                  <Button
-                    onPress={() => {
-                      hideModal();
-                      primaryAction();
-                    }}
-                    title={primaryActionTitle}
-                    variant={ButtonVariant.Primary}
-                  />
+                  <StyledAction>
+                    <Button
+                      onPress={() => {
+                        hideModal();
+                        primaryAction();
+                      }}
+                      title={primaryActionTitle}
+                      variant={ButtonVariant.Primary}
+                    />
+                  </StyledAction>
                 )}
               </StyledModalFooter>
             </StyledModalInner>

@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 
 import useHydration from '../hooks/useHydration';
 import FavoriteLocations from '../screens/favoriteLocations';
-import FavoriteLocationsMap from '../screens/favoriteLocationsMap';
+
 import Home from '../screens/home';
 import { RootStackParamList } from './types';
 
@@ -23,10 +23,12 @@ function Navigation(): JSX.Element {
         }}
       >
         <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="FavoriteLocations" component={FavoriteLocations} />
         <Stack.Screen
-          name="FavoriteLocationsMap"
-          component={FavoriteLocationsMap}
+          name="FavoriteLocations"
+          component={FavoriteLocations}
+          options={{
+            presentation: 'modal',
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>

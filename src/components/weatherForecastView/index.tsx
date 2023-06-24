@@ -5,7 +5,6 @@
  */
 
 import React from 'react';
-import { useTheme } from 'styled-components/native';
 import * as icons from '../../assets';
 import Button from '../button';
 import { StyledText } from '../common';
@@ -17,17 +16,14 @@ import {
   StyledWeatherForecastView,
   StyledWeatherForecastViewContainer,
   StyledWeatherIcon,
+  StyledActionsWrapper,
 } from './styles';
 import { IWeatherForecastViewProps } from './types';
 function WeatherForecastView({
   weatherForecast,
-  weatherCondition,
+
   onAddToFavorites,
 }: IWeatherForecastViewProps): JSX.Element {
-  const {
-    colors: { cloudy, rainy, sunny },
-  } = useTheme();
-
   const getIconByType = (type: string) => {
     switch (type) {
       case WeatherCondition.Sunny:
@@ -41,24 +37,9 @@ function WeatherForecastView({
     }
   };
 
-  const getBackgroundByType = () => {
-    switch (weatherCondition) {
-      case WeatherCondition.Sunny:
-        return sunny;
-      case WeatherCondition.Cloudy:
-        return cloudy;
-      case WeatherCondition.Rainy:
-        return rainy;
-      default:
-        return sunny;
-    }
-  };
-
   return (
     <>
-      <StyledWeatherForecastViewContainer
-        backgroundColor={getBackgroundByType()}
-      >
+      <StyledWeatherForecastViewContainer>
         {weatherForecast.map(({ type, day, temperature }, index) => (
           <StyledWeatherForecastView
             key={day}
@@ -80,7 +61,9 @@ function WeatherForecastView({
           </StyledWeatherForecastView>
         ))}
       </StyledWeatherForecastViewContainer>
-      <Button title="Add to favorites" onPress={onAddToFavorites} />
+      <StyledActionsWrapper>
+        <Button title="Add to favorites" onPress={onAddToFavorites} />
+      </StyledActionsWrapper>
     </>
   );
 }

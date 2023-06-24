@@ -14,13 +14,12 @@ import {
 import { ICurrentDayWeatherSummaryProps } from './types';
 
 function CurrentDayWeatherSummary({
-  backgroundColor,
   minimumTemperature,
   maximumTemperature,
   currentTemperature,
 }: ICurrentDayWeatherSummaryProps): JSX.Element {
   return (
-    <StyledCurrentDayWeatherSummary backgroundColor={backgroundColor}>
+    <StyledCurrentDayWeatherSummary>
       <StyledForecastSummaryContainer>
         <TemperatureInDegrees
           temperature={minimumTemperature}

@@ -2,9 +2,9 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ICoordinates } from '../hooks/useWeather/types';
 
 type RootStackParamList = {
-  Home: undefined;
+  Home?: ICoordinates;
   FavoriteLocations: undefined;
-  FavoriteLocationsMap: ICoordinates;
+  FavoriteLocationsMap: undefined;
   coords: ICoordinates;
 };
 
