@@ -21,7 +21,6 @@ import {
 import { IWeatherForecastViewProps } from './types';
 function WeatherForecastView({
   weatherForecast,
-
   onAddToFavorites,
 }: IWeatherForecastViewProps): JSX.Element {
   const getIconByType = (type: string) => {
